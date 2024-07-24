@@ -2,15 +2,22 @@ import { useState } from "react";
 import Player from "./components/Player";
 import GameBoard from "./components/GameBoard";
 import Log from "./components/Log";
+import { WINNING_COMBINATIONS } from "../winning-combinations";
+
+function deriveActivePlayer(gameTurns) {
+  let correntPlayer = "X";
+
+  if (gameTurns.length > 0 && gameTurns[0].player === "X") correntPlayer = "O";
+  return correntPlayer;
+}
+
 function App() {
-  const [activePlayer, setActive] = useState("X");
   const [gameTurns, setGameTurns] = useState([]);
+
+  const activePlayer = deriveActivePlayer(gameTurns);
   function handleActive(rowIndex, colIndex) {
-    setActive((curActivePlayer) => (curActivePlayer == "X" ? "O" : "X"));
     setGameTurns((prevTurns) => {
-      let correntPlayer = "X";
-      if (prevTurns.length > 0 && prevTurns[0].player === "X")
-        correntPlayer = "O";
+      const correntPlayer = deriveActivePlayer(prevTurns);
 
       // saying player : activePlayer is wrong because we need to avoid two states in each other
       const updatedTurns = [
