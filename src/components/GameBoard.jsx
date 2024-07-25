@@ -1,15 +1,4 @@
-const initialGameBoard = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
-export default function GameBoard({ handleActive, turns }) {
-  let gameBoard = initialGameBoard;
-  for (const turn of turns) {
-    const { square, player } = turn;
-    const { row, col } = square;
-    gameBoard[row][col] = player;
-  }
+export default function GameBoard({ handleActive, Board }) {
   // const [symbol, setSymbol] = useState(initialGameBoard);
   // function handleSymbol(row, col) {
   //   const copy = symbol.map((array) => array.slice());
@@ -19,7 +8,7 @@ export default function GameBoard({ handleActive, turns }) {
   // }
   return (
     <ol id="game-board">
-      {gameBoard.map((row, rowIndex) => (
+      {Board.map((row, rowIndex) => (
         <li key={rowIndex}>
           <ol>
             {row.map((playerSymbol, colIndex) => (

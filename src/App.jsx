@@ -3,7 +3,12 @@ import Player from "./components/Player";
 import GameBoard from "./components/GameBoard";
 import Log from "./components/Log";
 import { WINNING_COMBINATIONS } from "../winning-combinations";
-
+import GameOver from "./components/GameOver";
+export const initialGameBoard = [
+  [null, null, null],
+  [null, null, null],
+  [null, null, null],
+];
 function deriveActivePlayer(gameTurns) {
   let correntPlayer = "X";
 
@@ -11,10 +16,41 @@ function deriveActivePlayer(gameTurns) {
   return correntPlayer;
 }
 
-function App() {
+export function App() {
+  const [name, setName] = useState({ X: "FIRST PLAYER", O: "SECOND PLAYER" });
   const [gameTurns, setGameTurns] = useState([]);
-
   const activePlayer = deriveActivePlayer(gameTurns);
+
+  let gameBoard = [...initialGameBoard.map((array) => [...array])];
+  for (const turn of gameTurns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+    gameBoard[row][col] = player;
+  }
+  let winner = "";
+  if (gameTurns.length == 9) winner = gameTurns.length;
+  for (const combination of WINNING_COMBINATIONS) {
+    const firstSquareSymbol =
+      gameBoard[combination[0].row][combination[0].column];
+    const secondSquareSymbol =
+      gameBoard[combination[1].row][combination[1].column];
+    const ThirdSquareSymbol =
+      gameBoard[combination[2].row][combination[2].column];
+    if (
+      firstSquareSymbol &&
+      firstSquareSymbol == secondSquareSymbol &&
+      firstSquareSymbol == ThirdSquareSymbol
+    )
+      winner = firstSquareSymbol;
+  }
+  function handleName(symbol, newName) {
+    setName((prevName) => {
+      return {
+        ...prevName,
+        [symbol]: newName,
+      };
+    });
+  }
   function handleActive(rowIndex, colIndex) {
     setGameTurns((prevTurns) => {
       const correntPlayer = deriveActivePlayer(prevTurns);
@@ -31,14 +67,27 @@ function App() {
     <main>
       <div id="game-container">
         <ol id="players">
-          <Player initialName="first player" symbol="X" active={activePlayer} />
+          <Player
+            initialName="first player"
+            symbol="X"
+            active={activePlayer}
+            setName={handleName}
+          />
           <Player
             initialName="second player"
             symbol="O"
             active={activePlayer}
+            setName={handleName}
           />
         </ol>
-        <GameBoard turns={gameTurns} handleActive={handleActive} />
+        <GameOver
+          result={winner}
+          Board={gameBoard}
+          gameTurns={setGameTurns}
+          name={name}
+          winner={winner}
+        />
+        <GameBoard Board={gameBoard} handleActive={handleActive} />
       </div>
       <Log turns={gameTurns} />
     </main>
